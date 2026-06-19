@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Disabilities · AAKAR Child Development Centre</title>
+<meta name="description" content="Learning Disabilities: a warm, parent-focused guide from AAKAR Child Development Centre — understanding, strengths, signs to notice, and how we support your child.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --ac:#7DB72C; --acd:#5E9018; --tint:#F4FBEA; --acA:rgba(125,183,44,0.14); }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:#FDF7EF; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2B2535; -webkit-font-smoothing:antialiased; overflow-x:hidden; line-height:1.6; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--ac); color:#fff; }
+  @keyframes ak-morph{ 0%,100%{ border-radius:42% 58% 63% 37% / 47% 42% 58% 53% } 50%{ border-radius:62% 38% 41% 59% / 56% 63% 37% 44% } }
+  @keyframes ak-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-14px) } }
+  @keyframes ak-pulse{ 0%{ transform:scale(1); opacity:.55 } 70%{ transform:scale(1.9); opacity:0 } 100%{ opacity:0 } }
+  .cd-crayon{ font-family:'Caveat',cursive; font-weight:700; letter-spacing:.5px; }
+  .cd-eyebrow{ font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:var(--acd); margin-bottom:14px; }
+  .cd-wrap{ max-width:1100px; margin:0 auto; }
+  .cd-sec{ padding:clamp(50px,7vw,96px) clamp(20px,5vw,80px); position:relative; overflow:hidden; }
+  .cd-h2{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(1.8rem,4vw,2.9rem); line-height:1.08; margin:0 0 14px; }
+  .cd-reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+  .cd-reveal.in{ opacity:1; transform:none; }
+  /* nav */
+  nav{ position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(20px,4vw,56px); background:rgba(253,247,239,.88); backdrop-filter:blur(14px); box-shadow:0 4px 22px rgba(43,37,53,.06); }
+  /* hero */
+  .cd-hero{ background:radial-gradient(120% 100% at 18% 0%, var(--tint) 0%, #FFFDF8 55%, #FBF3E8 100%); }
+  .cd-hero__grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(34px,5vw,64px); align-items:center; }
+  .cd-hero h1{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(2.4rem,5.4vw,4rem); line-height:1.02; letter-spacing:-.5px; margin:0 0 18px; }
+  .cd-hero p{ font-size:clamp(1.05rem,1.7vw,1.25rem); color:#5A5466; max-width:520px; margin:0 0 28px; }
+  .cd-btn{ display:inline-flex; align-items:center; gap:9px; background:var(--ac); color:#fff; padding:15px 26px; border-radius:44px; font-weight:700; font-size:16px; box-shadow:0 14px 30px rgba(125,183,44,0.32); }
+  .cd-btn.ghost{ background:rgba(255,255,255,.85); border:1.5px solid rgba(43,37,53,.12); color:#2B2535; box-shadow:none; }
+  .cd-hero__img{ position:relative; justify-self:center; width:min(86vw,440px); }
+  .cd-hero__img .blob1{ position:absolute; inset:-7% -9% -11% -7%; background:linear-gradient(135deg,var(--ac),#5E9018); border-radius:46% 54% 60% 40% / 52% 44% 56% 48%; animation:ak-morph 11s ease-in-out infinite; box-shadow:0 36px 80px rgba(125,183,44,0.26); }
+  .cd-hero__img .frame{ position:relative; aspect-ratio:1/1; border-radius:44% 56% 54% 46% / 47% 47% 53% 53%; overflow:hidden; box-shadow:0 24px 60px rgba(43,37,53,.22); border:6px solid #fff; }
+  .cd-hero__img .frame img{ width:100%; height:100%; object-fit:cover; }
+  /* understand */
+  .cd-understand p{ font-size:1.08rem; color:#3A3446; margin:0 0 16px; max-width:820px; }
+  .cd-callout{ margin-top:10px; background:var(--tint); border-left:5px solid var(--ac); border-radius:16px; padding:20px 24px; color:var(--acd); font-weight:600; max-width:820px; }
+  /* signs */
+  .cd-grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .cd-card{ background:#fff; border-radius:20px; padding:24px; box-shadow:0 12px 30px rgba(43,37,53,.06); }
+  .cd-card__ic{ font-size:26px; margin-bottom:10px; }
+  .cd-card h3{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.1rem; margin:0 0 6px; }
+  .cd-card p{ color:#5A5466; margin:0; font-size:.97rem; }
+  .cd-note{ display:inline-block; background:#fff; border:1px dashed var(--ac); color:var(--acd); font-weight:600; font-size:.9rem; padding:8px 16px; border-radius:30px; margin-top:22px; }
+  /* strengths */
+  .cd-strengths{ background:linear-gradient(135deg, var(--tint), #FFFDF8); }
+  .cd-strength{ display:flex; align-items:center; gap:12px; background:#fff; border-radius:16px; padding:16px 20px; box-shadow:0 10px 26px rgba(43,37,53,.05); font-weight:600; color:#2B2535; }
+  .cd-strength span{ color:var(--ac); font-size:18px; }
+  .cd-strength-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:820px; }
+  /* journey */
+  .cd-step{ display:flex; gap:18px; align-items:flex-start; background:#fff; border-radius:20px; padding:22px 24px; box-shadow:0 12px 30px rgba(43,37,53,.05); margin-bottom:14px; }
+  .cd-step__n{ flex:none; width:48px; height:48px; border-radius:14px; background:var(--acA); color:var(--acd); font-family:'Fredoka',sans-serif; font-weight:700; font-size:18px; display:flex; align-items:center; justify-content:center; }
+  .cd-step h3{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin:2px 0 4px; }
+  .cd-step p{ color:#5A5466; margin:0; }
+  /* therapies */
+  .cd-therapy{ background:#fff; border-radius:22px; padding:26px; box-shadow:0 14px 34px rgba(43,37,53,.07); border-top:5px solid var(--ac); }
+  .cd-therapy__ic{ font-size:30px; }
+  .cd-therapy h3{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:10px 0 8px; }
+  .cd-therapy__what{ color:#5A5466; margin:0 0 14px; }
+  .cd-therapy__row{ font-size:.94rem; color:#5A5466; margin-top:10px; }
+  .cd-therapy__row strong{ display:block; color:var(--acd); font-size:.82rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+  /* faq */
+  .cd-faq{ background:#fff; border-radius:16px; box-shadow:0 10px 26px rgba(43,37,53,.05); margin-bottom:12px; overflow:hidden; }
+  .cd-faq summary{ list-style:none; cursor:pointer; padding:20px 24px; font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.08rem; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .cd-faq summary::-webkit-details-marker{ display:none; }
+  .cd-faq__plus{ flex:none; width:30px; height:30px; border-radius:50%; background:var(--acA); color:var(--acd); display:flex; align-items:center; justify-content:center; font-size:20px; transition:transform .3s; }
+  .cd-faq[open] .cd-faq__plus{ transform:rotate(45deg); }
+  .cd-faq__a{ padding:0 24px 22px; color:#5A5466; }
+  /* resources */
+  .cd-tip{ display:flex; gap:12px; align-items:flex-start; background:#fff; border-radius:16px; padding:18px 20px; box-shadow:0 10px 26px rgba(43,37,53,.05); color:#3A3446; }
+  .cd-tip__dot{ flex:none; width:12px; height:12px; border-radius:50%; background:var(--ac); margin-top:6px; }
+  .cd-tip-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  /* cta */
+  .cd-cta{ background:radial-gradient(120% 100% at 50% 0%, var(--tint) 0%, #FFD7E6 60%, #CFE6FF 100%); text-align:center; }
+  .cd-cta__box{ max-width:760px; margin:0 auto; }
+  /* footer */
+  footer{ background:#1C1726; color:#EDE8F0; padding:50px clamp(20px,5vw,80px); text-align:center; }
+  @media (max-width:820px){ .cd-hero__grid{ grid-template-columns:1fr; } .cd-grid3{ grid-template-columns:1fr; } .cd-strength-grid,.cd-tip-grid{ grid-template-columns:1fr; } }
+  @media (min-width:680px){ .cd-therapies-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; } }
+  .cd-therapies-grid{ display:flex; flex-direction:column; gap:18px; }
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="../index.html" style="display:flex; align-items:center; gap:12px;">
+      <img src="../images/aakar-emblem.png" alt="AAKAR" style="width:44px; height:44px; object-fit:contain;">
+      <span style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:25px; letter-spacing:.5px;"><span style="color:#16A3AF">A</span><span style="color:#ED1A5F">A</span><span style="color:#F58A1F">K</span><span style="color:#7DB72C">A</span><span style="color:#B57400">R</span></span>
+    </a>
+    <a href="../index.html#ak-conditions" style="display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid rgba(43,37,53,.1); color:#2B2535; padding:11px 20px; border-radius:40px; font-weight:700; font-size:14px;">← All conditions</a>
+  </nav>
+
+  <!-- 1. HERO -->
+  <section class="cd-sec cd-hero">
+    <div class="cd-wrap cd-hero__grid">
+      <div class="cd-reveal">
+        <div class="cd-eyebrow">Conditions &amp; needs we support</div>
+        <h1>Learning Disabilities</h1>
+        <p>A bright child who finds reading, writing or maths unexpectedly hard can leave everyone confused. A learning difference is not about intelligence — it's about finding the doorway that fits.</p>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a class="cd-btn" href="../index.html#ak-contact">Book an assessment →</a>
+          <a class="cd-btn ghost" href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener">Talk to AAKAR</a>
+        </div>
+      </div>
+      <div class="cd-hero__img cd-reveal">
+        <div class="blob1"></div>
+        <div class="frame"><img src="../images/gal-04.jpeg" alt="A warm, welcoming space at AAKAR"></div>
+        <div style="position:absolute; top:-12px; right:-6px; width:46px; height:46px; border-radius:50%; background:var(--ac); opacity:.9; animation:ak-bob 5s ease-in-out infinite;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. UNDERSTANDING -->
+  <section class="cd-sec cd-understand" style="background:#FDF7EF;">
+    <div class="cd-wrap">
+      <div class="cd-reveal"><div class="cd-eyebrow">Understanding this</div><h2 class="cd-h2">What learning disabilities can mean</h2></div>
+      <p class="cd-reveal">Learning disabilities — such as dyslexia, dysgraphia and dyscalculia — affect specific skills like reading, writing or maths, while leaving overall intelligence intact.</p>
+      <p class="cd-reveal">These children often work twice as hard for the same result, which can affect confidence. The key is teaching that matches how their brain learns best — usually structured, multisensory and paced for them.</p>
+      <p class="cd-reveal">With the right approach, children with learning differences flourish — and many of the world's most creative thinkers learn exactly this way.</p>
+      <div class="cd-callout cd-reveal">Why early support helps: a child's early years are a time of rapid growth — gentle, timely support can make a meaningful, lasting difference. And it's never too late to begin.</div>
+    </div>
+  </section>
+
+  <!-- 3. SIGNS -->
+  <section class="cd-sec" style="background:linear-gradient(135deg,#FFFDF8,var(--tint));">
+    <div class="cd-wrap">
+      <div class="cd-reveal" style="text-align:center; margin-bottom:34px;"><div class="cd-eyebrow">Gentle observations</div><h2 class="cd-h2">Signs parents may notice</h2><p style="color:#5A5466; max-width:600px; margin:0 auto;">These are everyday observations that some parents notice — not a diagnosis. Every child is different, and only a proper assessment can give real answers.</p></div>
+      <div class="cd-grid3">
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">🏠</div><h3>At Home</h3><p>Homework may take far longer than expected, with rising frustration.</p></div>
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">🧸</div><h3>During Play</h3><p>Strengths often shine in hands-on, creative or building play.</p></div>
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">💬</div><h3>Communication</h3><p>May explain ideas brilliantly out loud but struggle to write them down.</p></div>
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">📖</div><h3>Learning</h3><p>Difficulty with reading, spelling, writing or maths despite real effort.</p></div>
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">🤝</div><h3>Social Interaction</h3><p>May avoid reading or writing tasks in front of friends.</p></div>
+        <div class="cd-card cd-reveal"><div class="cd-card__ic">🌷</div><h3>Daily Activities</h3><p>May mix up left/right, sequences, or have trouble with time and organisation.</p></div>
+      </div>
+      <div style="text-align:center;"><span class="cd-note">If some of these feel familiar, a conversation is a kind next step — not a label.</span></div>
+    </div>
+  </section>
+
+  <!-- 4. STRENGTHS -->
+  <section class="cd-sec cd-strengths">
+    <div class="cd-wrap">
+      <div class="cd-reveal" style="margin-bottom:28px;"><div class="cd-eyebrow">The whole child</div><h2 class="cd-h2">Strengths we often see</h2><p style="color:#5A5466; max-width:620px;">A child is so much more than any challenge. These are gifts we so often celebrate in the children we work with.</p></div>
+      <div class="cd-strength-grid">
+        <div class="cd-strength cd-reveal"><span>✦</span>Visual and big-picture thinking</div>
+        <div class="cd-strength cd-reveal"><span>✦</span>Creativity and original ideas</div>
+        <div class="cd-strength cd-reveal"><span>✦</span>Strong problem-solving and innovation</div>
+        <div class="cd-strength cd-reveal"><span>✦</span>Resilience and determination</div>
+        <div class="cd-strength cd-reveal"><span>✦</span>Verbal storytelling and imagination</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. HOW AAKAR SUPPORTS -->
+  <section class="cd-sec" style="background:#FDF7EF;">
+    <div class="cd-wrap">
+      <div class="cd-reveal" style="margin-bottom:30px;"><div class="cd-eyebrow">A partnership, step by step</div><h2 class="cd-h2">How AAKAR supports your child</h2><p style="color:#5A5466; max-width:640px;">We work alongside your family — never around you — with a plan built for your child alone.</p></div>
+      
+        <div class="cd-step cd-reveal"><div class="cd-step__n">01</div><div><h3>Parent Consultation</h3><p>We start by listening — to your concerns, your child's developmental story, and the goals that matter most to your family.</p></div></div>
+        <div class="cd-step cd-reveal"><div class="cd-step__n">02</div><div><h3>Comprehensive Assessment</h3><p>A gentle, play-based assessment to understand your child's strengths and support needs across communication, learning, behaviour and daily functioning.</p></div></div>
+        <div class="cd-step cd-reveal"><div class="cd-step__n">03</div><div><h3>Personalized Development Plan</h3><p>Individual goals shaped around your child and your family priorities — with school collaboration whenever it helps.</p></div></div>
+        <div class="cd-step cd-reveal"><div class="cd-step__n">04</div><div><h3>Therapy &amp; Intervention</h3><p>The right mix of support, delivered by a multidisciplinary team that works as one — so nothing happens in isolation.</p></div></div>
+        <div class="cd-step cd-reveal"><div class="cd-step__n">05</div><div><h3>Progress Reviews</h3><p>We track growth, refine goals together, and celebrate every milestone along the way.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 6. THERAPIES -->
+  <section class="cd-sec" style="background:linear-gradient(135deg,var(--tint),#FFFDF8);">
+    <div class="cd-wrap">
+      <div class="cd-reveal" style="margin-bottom:30px;"><div class="cd-eyebrow">Tailored to your child</div><h2 class="cd-h2">Therapies we may recommend</h2><p style="color:#5A5466; max-width:640px;">Every plan is individual. Depending on your child's needs, support may include:</p></div>
+      <div class="cd-therapies-grid">
+        <div class="cd-therapy cd-reveal"><div class="cd-therapy__ic">📚</div><h3>Special Education</h3><p class="cd-therapy__what">Structured, multisensory teaching matched to how your child learns best — at their own pace.</p><div class="cd-therapy__row"><strong>How it helps</strong>Opens a different doorway into reading, writing, maths and learning to love learning.</div><div class="cd-therapy__row"><strong>A session may look like</strong>Small-group or one-to-one sessions using hands-on, multisensory methods.</div></div>
+        <div class="cd-therapy cd-reveal"><div class="cd-therapy__ic">🖐️</div><h3>Occupational Therapy</h3><p class="cd-therapy__what">Supporting the everyday "occupations" of childhood — play, self-care, handwriting, focus and sensory regulation.</p><div class="cd-therapy__row"><strong>How it helps</strong>Builds independence, motor skills and the confidence to take part in daily life.</div><div class="cd-therapy__row"><strong>A session may look like</strong>Obstacle courses, fine-motor crafts, sensory activities and calming strategies tailored to your child.</div></div>
+        <div class="cd-therapy cd-reveal"><div class="cd-therapy__ic">💚</div><h3>Psychological Counselling</h3><p class="cd-therapy__what">A safe, warm space for children and parents to understand big feelings and find new ways to cope.</p><div class="cd-therapy__row"><strong>How it helps</strong>Supports emotional wellbeing, confidence and resilience.</div><div class="cd-therapy__row"><strong>A session may look like</strong>Talk, play and creative activities, plus practical guidance for parents.</div></div>
+        <div class="cd-therapy cd-reveal"><div class="cd-therapy__ic">👨‍👩‍👧</div><h3>Parent Coaching</h3><p class="cd-therapy__what">Equipping you with simple, doable strategies so progress continues between sessions, at home.</p><div class="cd-therapy__row"><strong>How it helps</strong>Makes you a confident partner in your child's growth — never a spectator.</div><div class="cd-therapy__row"><strong>A session may look like</strong>Short, practical coaching woven around your family's real routines.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FAQ -->
+  <section class="cd-sec" style="background:#FDF7EF;">
+    <div class="cd-wrap" style="max-width:860px;">
+      <div class="cd-reveal" style="text-align:center; margin-bottom:30px;"><div class="cd-eyebrow">You asked</div><h2 class="cd-h2">Parent questions, answered</h2></div>
+      
+        <details class="cd-faq cd-reveal"><summary>Does a learning disability mean my child isn't intelligent?<span class="cd-faq__plus">+</span></summary><div class="cd-faq__a">Not at all. Learning disabilities are specific — they affect particular skills, not overall ability. Many children with learning differences are highly intelligent and creative.</div></details>
+        <details class="cd-faq cd-reveal"><summary>Can my child still do well in school?<span class="cd-faq__plus">+</span></summary><div class="cd-faq__a">Absolutely. With the right teaching methods and reasonable accommodations, children with learning differences succeed academically and rediscover their love of learning.</div></details>
+        <details class="cd-faq cd-reveal"><summary>Is early intervention really that important?<span class="cd-faq__plus">+</span></summary><div class="cd-faq__a">Yes. A child's early years are a time of remarkable brain growth, and timely, gentle support can make a meaningful, lasting difference. That said, support helps at any age — it's never "too late" to begin.</div></details>
+        <details class="cd-faq cd-reveal"><summary>How long does therapy take?<span class="cd-faq__plus">+</span></summary><div class="cd-faq__a">Every child is different, so there's no single answer. We set clear goals, review progress regularly, and are always honest about what we're seeing. The aim is always independence — not therapy for its own sake.</div></details>
+        <details class="cd-faq cd-reveal"><summary>How involved should I be as a parent?<span class="cd-faq__plus">+</span></summary><div class="cd-faq__a">As involved as you'd like to be — and we hope that's a lot. Parents are partners at AAKAR. We coach you with simple strategies so the progress made in sessions continues at home.</div></details>
+    </div>
+  </section>
+
+  <!-- 8. RESOURCES -->
+  <section class="cd-sec cd-strengths">
+    <div class="cd-wrap">
+      <div class="cd-reveal" style="margin-bottom:28px;"><div class="cd-eyebrow">For home</div><h2 class="cd-h2">Things you can try, today</h2><p style="color:#5A5466; max-width:620px;">Small, practical ideas to support your child between visits. Go gently — and follow your child's lead.</p></div>
+      <div class="cd-tip-grid">
+        <div class="cd-tip cd-reveal"><span class="cd-tip__dot"></span>Lean into strengths — use drawing, building or talking to learn.</div>
+        <div class="cd-tip cd-reveal"><span class="cd-tip__dot"></span>Break reading and writing into short, success-sized chunks.</div>
+        <div class="cd-tip cd-reveal"><span class="cd-tip__dot"></span>Use multisensory tools: trace letters, build words, say sounds aloud.</div>
+        <div class="cd-tip cd-reveal"><span class="cd-tip__dot"></span>Protect confidence — praise effort and progress, not just results.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CTA -->
+  <section class="cd-sec cd-cta">
+    <div class="cd-cta__box cd-reveal">
+      <h2 class="cd-crayon" style="font-size:clamp(2.2rem,5vw,3.6rem); line-height:1; margin:0 0 16px;">You know your child best.</h2>
+      <p style="color:#5A5466; font-size:1.12rem; max-width:600px; margin:0 auto 26px;">If something feels different, seeking guidance isn't about finding a label — it's about understanding how to support your child's growth, with confidence. We'd love to help.</p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a class="cd-btn" href="../index.html#ak-contact">Book an assessment →</a>
+        <a class="cd-btn ghost" href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener">Contact AAKAR</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div style="display:flex; align-items:center; justify-content:center; gap:11px; margin-bottom:14px;">
+      <img src="../images/aakar-emblem.png" alt="" style="width:42px; height:42px; object-fit:contain;">
+      <span style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:24px;"><span style="color:#2BC4D0">A</span><span style="color:#FF477E">A</span><span style="color:#FF9F43">K</span><span style="color:#9BD64A">A</span><span style="color:#FFD54F">R</span></span>
+    </div>
+    <p style="color:#B7AFC4; margin:0 0 8px;">Shaping every child's tomorrow.</p>
+    <a href="../index.html" style="color:#2BC4D0; font-weight:700;">← Back to home</a>
+  </footer>
+
+  <a href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" style="position:fixed; bottom:24px; right:24px; z-index:80; width:60px; height:60px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(37,211,102,.45);">
+    <span style="position:absolute; inset:0; border-radius:50%; background:#25D366; animation:ak-pulse 2.4s ease-out infinite; z-index:-1;"></span>
+    <svg width="31" height="31" viewBox="0 0 32 32" fill="#fff" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.96.51 3.87 1.49 5.56L4.8 27.2l6.74-1.64a11 11 0 0 0 4.5.96h.01c6.11 0 11.06-4.95 11.06-11.06C27.11 8.95 22.15 4 16.04 4Zm0 20.27h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.49.85.93-3.4-.22-.35a9.16 9.16 0 0 1-1.41-4.9c0-5.07 4.13-9.2 9.21-9.2 2.46 0 4.77.96 6.5 2.7a9.13 9.13 0 0 1 2.7 6.51c0 5.08-4.13 9.21-9.2 9.21Zm5.05-6.89c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.74-1.38-1.65-1.54-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.32.41-.49.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.49-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.94 2.96 4.7 4.15.66.28 1.17.45 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33Z"/></svg>
+  </a>
+
+<script>
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold:0.12, rootMargin:'0px 0px -6% 0px' });
+  document.querySelectorAll('.cd-reveal').forEach(function(el){ io.observe(el); });
+</script>
+</body>
+</html>

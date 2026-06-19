@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <style>
   *{ box-sizing:border-box; }
@@ -56,9 +57,157 @@
   @media (max-width:520px){ .ak-sports-grid{ grid-template-columns:1fr !important; } }
   @media (max-width:680px){ [data-exp-panel]{ grid-template-columns:1fr !important; } }
   .ak-exp-panel-grid{}
+  /* ---- cinematic preloader ---- */
+  #ak-preloader{ position:fixed; inset:0; z-index:100000; display:flex; align-items:center; justify-content:center; background:radial-gradient(120% 120% at 50% 45%, #FFFFFF 0%, #FFFDF8 55%, #FBF3E8 100%); overflow:hidden; will-change:transform,opacity; }
+  #ak-preloader.ak-pre-hide{ display:none !important; }
+  #ak-pre-stage{ position:relative; width:340px; height:340px; display:flex; align-items:center; justify-content:center; will-change:transform; }
+  #ak-pre-particles{ position:absolute; inset:0; pointer-events:none; }
+  #ak-pre-particles i{ position:absolute; top:50%; left:50%; display:block; border-radius:50%; will-change:transform,opacity; }
+  #ak-pre-ring{ position:absolute; top:50%; left:50%; width:300px; height:300px; margin:-150px 0 0 -150px; will-change:transform,opacity; }
+  #ak-pre-ring circle{ fill:none; stroke-width:5; stroke-linecap:round; transform-origin:center; }
+  #ak-pre-logo{ position:relative; display:flex; flex-direction:column; align-items:center; gap:14px; will-change:transform,opacity; }
+  #ak-pre-emblem{ width:118px; height:118px; object-fit:contain; opacity:0; transform:scale(.6); will-change:transform,opacity; filter:drop-shadow(0 10px 26px rgba(22,163,175,.30)); }
+  #ak-pre-glow{ position:absolute; top:50%; left:50%; width:160px; height:160px; margin:-80px 0 0 -80px; border-radius:50%; background:radial-gradient(circle, rgba(22,163,175,.35), rgba(245,138,31,.18) 45%, transparent 70%); opacity:0; transform:scale(.4); pointer-events:none; }
+  #ak-pre-word{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:40px; letter-spacing:1px; line-height:1; display:flex; gap:1px; }
+  #ak-pre-word span{ opacity:0; transform:translateY(16px); display:inline-block; will-change:transform,opacity; }
+  #ak-pre-tag{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:12.5px; letter-spacing:3px; text-transform:uppercase; color:#0E7A84; opacity:0; transform:translateY(8px); }
+  #ak-pre-skip{ position:fixed; bottom:30px; right:30px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:600; color:#6A6478; background:rgba(255,255,255,.7); border:1px solid rgba(43,37,53,.12); padding:9px 18px; border-radius:30px; cursor:pointer; opacity:0; pointer-events:none; transition:opacity .4s, background .2s, color .2s; backdrop-filter:blur(6px); }
+  #ak-pre-skip:hover{ background:#16A3AF; color:#fff; }
+  @media (prefers-reduced-motion: reduce){ #ak-preloader{ display:none !important; } }
 </style>
 </head>
 <body>
+
+<!-- CINEMATIC LOGO PRELOADER -->
+<div id="ak-preloader" aria-hidden="true">
+  <div id="ak-pre-stage">
+    <div id="ak-pre-particles"></div>
+    <svg id="ak-pre-ring" viewBox="0 0 300 300" aria-hidden="true">
+      <circle id="ak-pre-ring-path" cx="150" cy="150" r="120" stroke="url(#ak-pre-grad)"></circle>
+      <defs>
+        <linearGradient id="ak-pre-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#16A3AF"></stop>
+          <stop offset="33%" stop-color="#7DB72C"></stop>
+          <stop offset="62%" stop-color="#F58A1F"></stop>
+          <stop offset="100%" stop-color="#ED1A5F"></stop>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div id="ak-pre-glow"></div>
+    <div id="ak-pre-logo">
+      <img id="ak-pre-emblem" src="images/aakar-emblem.png" alt="AAKAR">
+      <div id="ak-pre-word"><span style="color:#16A3AF">A</span><span style="color:#ED1A5F">A</span><span style="color:#F58A1F">K</span><span style="color:#7DB72C">A</span><span style="color:#B57400">R</span></div>
+      <div id="ak-pre-tag">Shaping Every Child's Tomorrow</div>
+    </div>
+  </div>
+  <button id="ak-pre-skip" type="button">Skip intro →</button>
+</div>
+<script>
+(function(){
+  var pre = document.getElementById('ak-preloader');
+  if(!pre) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var done = false;
+  try { done = sessionStorage.getItem('aakar_intro_done') === '1'; } catch(e){}
+  if(done || reduce){ pre.classList.add('ak-pre-hide'); return; }
+
+  // preload key homepage assets during the animation
+  ['images/aakar-emblem.png','images/dr-khushboo-gour.png','images/aakar-logo.png'].forEach(function(s){ var im=new Image(); im.src=s; });
+
+  var BRAND = ['#16A3AF','#ED1A5F','#F58A1F','#7DB72C','#FFB300','#2BC4D0'];
+  var pl = document.getElementById('ak-pre-particles');
+  var N = (window.innerWidth < 760) ? 16 : 22;
+  var parts = [];
+  for(var i=0;i<N;i++){
+    var sz = 7 + Math.random()*13;
+    var el = document.createElement('i');
+    el.style.width = sz+'px'; el.style.height = sz+'px';
+    el.style.background = BRAND[i % BRAND.length];
+    el.style.marginLeft = (-sz/2)+'px'; el.style.marginTop = (-sz/2)+'px';
+    pl.appendChild(el);
+    var ang = (i/N)*Math.PI*2 + Math.random();
+    var dist = 170 + Math.random()*180;
+    parts.push({ el:el, sx:Math.cos(ang)*dist, sy:Math.sin(ang)*dist,
+                 mx:Math.cos(ang+0.7)*dist*0.5, my:Math.sin(ang+0.7)*dist*0.5 });
+  }
+
+  var skip = document.getElementById('ak-pre-skip');
+  var finished = false;
+  function finish(){
+    if(finished) return; finished = true;
+    try { sessionStorage.setItem('aakar_intro_done','1'); } catch(e){}
+    pre.parentNode && pre.parentNode.removeChild(pre);
+  }
+
+  function run(){
+    var hasGSAP = !!(window.gsap);
+    var hasMP = hasGSAP && !!window.MotionPathPlugin;
+    if(!hasGSAP){ // graceful fallback: quick fade
+      pre.style.transition='opacity .5s ease'; pre.style.opacity='0';
+      setTimeout(finish, 520); return;
+    }
+    if(hasMP) gsap.registerPlugin(MotionPathPlugin);
+
+    // skip button appears after 1s
+    var skipT = setTimeout(function(){ skip.style.opacity='1'; skip.style.pointerEvents='auto'; }, 1000);
+
+    var ringPath = document.getElementById('ak-pre-ring-path');
+    var len = 2 * Math.PI * 120;
+    gsap.set(ringPath, { strokeDasharray: len, strokeDashoffset: len, rotation:-90, transformOrigin:'center', scale:.85 });
+    gsap.set('#ak-pre-ring', { opacity:0, scale:.9 });
+    gsap.set(parts.map(function(p){return p.el;}), { opacity:0 });
+
+    var tl = gsap.timeline({ defaults:{ ease:'power3.out' }, onComplete: finish });
+
+    // 0.0–0.3 : particles emerge
+    parts.forEach(function(p, k){
+      gsap.set(p.el, { x:p.sx, y:p.sy });
+      tl.to(p.el, { opacity:0.9, duration:0.28, ease:'power1.out' }, 0.0 + (k%6)*0.012);
+    });
+
+    // 0.3–0.9 : particles sweep curved paths inward + ring draws
+    tl.to('#ak-pre-ring', { opacity:1, scale:1, duration:0.5 }, 0.30);
+    tl.to(ringPath, { strokeDashoffset:0, scale:1, duration:0.62, ease:'power2.inOut' }, 0.30);
+    parts.forEach(function(p, k){
+      var tween = { duration:0.62, ease:'power2.inOut', opacity:0.0 };
+      if(hasMP){ tween.motionPath = { path:[{x:p.sx,y:p.sy},{x:p.mx,y:p.my},{x:0,y:0}], curviness:1.4 }; }
+      else { tween.x = 0; tween.y = 0; }
+      tl.to(p.el, tween, 0.42 + (k%6)*0.01);
+    });
+
+    // 0.9–1.5 : A emblem converges, glow pulse
+    tl.to('#ak-pre-emblem', { opacity:1, scale:1, duration:0.55, ease:'back.out(1.7)' }, 0.92);
+    tl.fromTo('#ak-pre-glow', { opacity:0, scale:0.4 }, { opacity:1, scale:1.25, duration:0.5, ease:'power2.out' }, 0.95);
+    tl.to('#ak-pre-glow', { opacity:0, scale:1.7, duration:0.7, ease:'power2.out' }, 1.25);
+    tl.to(ringPath, { scale:1.04, duration:0.5, ease:'sine.inOut' }, 1.0);
+
+    // 1.5–2.0 : wordmark letters + tagline
+    tl.to('#ak-pre-word span', { opacity:1, y:0, duration:0.5, stagger:0.06, ease:'back.out(2)' }, 1.45);
+    tl.to('#ak-pre-tag', { opacity:1, y:0, duration:0.45 }, 1.78);
+
+    // 2.0–2.4 : ring expands into portal, logo dissolves into the page
+    tl.to('#ak-pre-ring', { scale:6.5, opacity:0, duration:0.62, ease:'power3.in' }, 2.02);
+    tl.to('#ak-pre-stage', { scale:1.16, duration:0.6, ease:'power2.in' }, 2.04);
+    tl.to(pre, { opacity:0, duration:0.5, ease:'power2.inOut' }, 2.12);
+
+    pre.__cleanup = function(){ clearTimeout(skipT); tl.kill(); };
+  }
+
+  skip.addEventListener('click', function(){
+    if(pre.__cleanup) pre.__cleanup();
+    if(window.gsap){ gsap.to(pre, { opacity:0, duration:0.4, ease:'power2.inOut', onComplete:finish }); }
+    else finish();
+  });
+
+  // start once gsap is available (poll briefly), else fallback
+  var t=0;
+  (function poll(){
+    if(window.gsap || t>18){ run(); }
+    else { t++; setTimeout(poll, 60); }
+  })();
+})();
+</script>
+
 <div id="ak-page" style="position:relative; width:100%; overflow:hidden;">
 
   <div id="ak-cursor" style="position:fixed; top:0; left:0; width:34px; height:34px; border:2px solid rgba(22,163,175,.6); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .25s, height .25s, background .25s, border-color .25s; mix-blend-mode:multiply; will-change:transform; display:none;"></div>
@@ -71,10 +220,10 @@
     </a>
     <div class="ak-nav-links" style="display:flex; align-items:center; gap:30px; font-weight:600; font-size:15px;">
       <a href="#ak-explorer" data-navlink style="opacity:.78; transition:opacity .2s;">Services</a>
-      <a href="#ak-journey" data-navlink style="opacity:.78; transition:opacity .2s;">Journey</a>
       <a href="#ak-conditions" data-navlink style="opacity:.78; transition:opacity .2s;">We Support</a>
+      <a href="#ak-journey" data-navlink style="opacity:.78; transition:opacity .2s;">Journey</a>
       <a href="Gallery.dc.html" style="opacity:.78; transition:opacity .2s;">Gallery</a>
-      <a href="Workshops & Training.dc.html" style="opacity:.78; transition:opacity .2s;">Workshops</a>
+      <a href="consultation.html" style="opacity:.78; transition:opacity .2s;">Virtual Consultation</a>
       <a href="#ak-contact" data-magnetic style="display:inline-flex; align-items:center; gap:8px; background:#16A3AF; color:#fff; padding:12px 22px; border-radius:40px; font-weight:700; box-shadow:0 10px 24px rgba(22,163,175,.32);">Book Assessment</a>
     </div>
     <a href="#ak-contact" class="ak-nav-mobile-cta" style="display:none; background:#16A3AF; color:#fff; padding:10px 18px; border-radius:40px; font-weight:700; font-size:14px;">Book</a>
@@ -97,7 +246,7 @@
     <div style="position:relative; z-index:5; max-width:1060px; text-align:center;">
       <div data-reveal="up" style="display:inline-flex; align-items:center; gap:9px; background:rgba(255,255,255,.7); backdrop-filter:blur(8px); border:1px solid rgba(22,163,175,.2); padding:9px 18px; border-radius:40px; font-weight:600; font-size:14px; color:#0E7A84; margin-bottom:30px; box-shadow:0 8px 22px rgba(22,163,175,.12);">
         <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#7DB72C;"></span>
-        A Child Development Centre
+        Shaping Every Child's Tomorrow
       </div>
       <h1 data-reveal="up" data-delay="80" style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(2.7rem,7.2vw,6.2rem); line-height:1.02; letter-spacing:-.5px; margin:0 0 22px;">
         Every child has a<br><span style="background:linear-gradient(100deg,#16A3AF,#7DB72C 30%,#F58A1F 58%,#ED1A5F 80%,#FFB300); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:ak-grad 9s ease-in-out infinite;">unique way to shine.</span>
@@ -186,7 +335,7 @@
         <p data-reveal="up" data-delay="160" style="max-width:560px; margin:18px auto 0; color:#5A5466; font-size:clamp(1rem,1.6vw,1.15rem); line-height:1.6;">Tap a world below. We'll show you exactly how AAKAR helps — and what's possible.</p>
       </div>
 
-      <div data-reveal="up" data-delay="200" class="ak-exp-shell" style="display:grid; grid-template-columns:300px 1fr; gap:30px; background:#fff; border:1px solid rgba(43,37,53,.07); border-radius:32px; box-shadow:0 24px 60px rgba(43,37,53,.08); padding:clamp(18px,2.4vw,30px);">
+      <div data-reveal="up" data-delay="200" class="ak-exp-shell" style="display:grid; grid-template-columns:300px 1fr; gap:30px; background:linear-gradient(135deg,#FFF6FA 0%,#F2FBFC 55%,#FFFBF0 100%); border:1px solid rgba(43,37,53,.07); border-radius:32px; box-shadow:0 24px 60px rgba(43,37,53,.08); padding:clamp(18px,2.4vw,30px);">
         <!-- tabs -->
         <div class="ak-exp-tabs" style="display:flex; flex-direction:column; gap:8px;">
           <button data-exp-tab="0" data-col="#16A3AF" style="display:flex; align-items:center; gap:13px; background:rgba(22,163,175,.14); border:1px solid rgba(22,163,175,.45); color:#0E7A84; padding:15px 17px; border-radius:16px; font-family:inherit; font-weight:600; font-size:15px; cursor:pointer; text-align:left; transition:background .3s, border-color .3s;"><span style="width:12px; height:12px; border-radius:50%; background:#16A3AF; flex:none;"></span>Communication</button>
@@ -342,38 +491,42 @@
     </div>
 
     <div class="ak-cond-grid" style="position:relative; max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(2,1fr); gap:16px;">
-      <div data-reveal="up" data-cond data-col="#16A3AF" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #16A3AF; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Autism Spectrum Disorder</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(22,163,175,.12); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">Strengths-based support for communication, sensory needs, social skills and routines — with therapy that feels like play and a plan that fits your child.</p></div>
-      </div>
-      <div data-reveal="up" data-delay="60" data-cond data-col="#ED1A5F" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #ED1A5F; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">ADHD &amp; Attention</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(237,26,95,.1); color:#C2134B; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">Practical strategies for focus, impulse control and self-regulation — at home and at school — alongside confidence-building and parent coaching.</p></div>
-      </div>
-      <div data-reveal="up" data-cond data-col="#F58A1F" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #F58A1F; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Speech &amp; Language Delay</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(245,138,31,.12); color:#B65F07; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">From late talkers to unclear speech, we build understanding and expression step by step — so your child can finally say what they mean.</p></div>
-      </div>
-      <div data-reveal="up" data-delay="60" data-cond data-col="#7DB72C" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #7DB72C; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Learning Disabilities</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(125,183,44,.13); color:#5E9018; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">Dyslexia, dysgraphia, dyscalculia and more — taught through a structured, multisensory approach matched to how your child learns best.</p></div>
-      </div>
-      <div data-reveal="up" data-cond data-col="#E6A700" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #FFB300; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Developmental Delay</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(255,179,0,.1); color:#A86A00; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">When milestones are slower to arrive, early, coordinated intervention makes the biggest difference. We help your child catch their stride.</p></div>
-      </div>
-      <div data-reveal="up" data-delay="60" data-cond data-col="#16A3AF" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #16A3AF; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Sensory Processing</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(22,163,175,.12); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">For children overwhelmed or under-responsive to sound, touch and movement, sensory integration brings calm, focus and comfort in daily life.</p></div>
-      </div>
-      <div data-reveal="up" data-cond data-col="#ED1A5F" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #ED1A5F; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Motor &amp; Coordination</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(237,26,95,.1); color:#C2134B; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">Gross and fine motor challenges affect everything from handwriting to play. Physiotherapy and OT build strength, balance and coordination.</p></div>
-      </div>
-      <div data-reveal="up" data-delay="60" data-cond data-col="#E6A700" style="background:#fff; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); cursor:pointer; border-left:5px solid #FFB300; transition:box-shadow .3s;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Behavioural &amp; Emotional</h3><span data-cond-icon style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(255,179,0,.1); color:#A86A00; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:600; transition:transform .35s;">+</span></div>
-        <div data-cond-body style="max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.16,1,.3,1);"><p style="color:#5A5466; line-height:1.65; margin:14px 0 0;">Big feelings, meltdowns, anxiety and rigidity are forms of communication. We help children regulate and cope — with warmth, never shame.</p></div>
-      </div>
+      <a href="conditions/autism.html" target="_blank" rel="noopener" data-reveal="up" data-hover style="display:block; background:#e8f6f7; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #16A3AF; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Autism Spectrum Disorder</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(22,163,175,0.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Strengths-based support for communication, sensory needs and social confidence.</p>
+      </a>
+      <a href="conditions/adhd.html" target="_blank" rel="noopener" data-reveal="up" data-delay="60" data-hover style="display:block; background:#fde8ef; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #ED1A5F; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">ADHD &amp; Attention</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(237,26,95,0.14); color:#C2134B; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Practical focus, regulation and confidence strategies — for home and school.</p>
+      </a>
+      <a href="conditions/speech-language-delay.html" target="_blank" rel="noopener" data-reveal="up" data-hover style="display:block; background:#fef3e9; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #F58A1F; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Speech &amp; Language Delay</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(245,138,31,0.14); color:#B65F07; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Building understanding and expression, step by gentle step.</p>
+      </a>
+      <a href="conditions/learning-disabilities.html" target="_blank" rel="noopener" data-reveal="up" data-delay="60" data-hover style="display:block; background:#f2f8ea; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #7DB72C; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Learning Disabilities</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(125,183,44,0.14); color:#5E9018; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Multisensory, structured learning matched to how your child thinks.</p>
+      </a>
+      <a href="conditions/developmental-delay.html" target="_blank" rel="noopener" data-reveal="up" data-hover style="display:block; background:#fff7e6; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #FFB300; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Developmental Delay</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(255,179,0,0.14); color:#A86A00; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Early, coordinated support to help your child catch their stride.</p>
+      </a>
+      <a href="conditions/sensory-processing.html" target="_blank" rel="noopener" data-reveal="up" data-delay="60" data-hover style="display:block; background:#e8f6f7; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #16A3AF; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Sensory Processing</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(22,163,175,0.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Calm, focus and comfort for children overwhelmed by the everyday.</p>
+      </a>
+      <a href="conditions/motor-coordination.html" target="_blank" rel="noopener" data-reveal="up" data-hover style="display:block; background:#fde8ef; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #ED1A5F; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Motor &amp; Coordination</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(237,26,95,0.14); color:#C2134B; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Strength, balance and coordination for play and independence.</p>
+      </a>
+      <a href="conditions/social-communication.html" target="_blank" rel="noopener" data-reveal="up" data-hover style="display:block; background:#eaf9fa; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #2BC4D0; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Social Communication</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(43,196,208,0.14); color:#0E8A94; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Learning the unwritten rules of friendship — gently, through play.</p>
+      </a>
+      <a href="conditions/behavioural-emotional.html" target="_blank" rel="noopener" data-reveal="up" data-delay="60" data-hover style="display:block; background:#fff7e6; border-radius:22px; padding:24px 26px; box-shadow:0 12px 30px rgba(43,37,53,.06); border-left:5px solid #FFB300; transition:transform .3s, box-shadow .3s;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;"><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.2rem; margin:0;">Behavioural &amp; Emotional</h3><span style="flex:none; width:30px; height:30px; border-radius:50%; background:rgba(255,179,0,0.14); color:#A86A00; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; transition:transform .35s;">→</span></div>
+        <p style="color:#5A5466; line-height:1.55; margin:12px 0 0; font-size:.96rem;">Regulation and coping skills — with warmth, never shame.</p>
+      </a>
     </div>
   </section>
 
@@ -516,6 +669,48 @@
     </div>
   </section>
 
+  <!-- TELETHERAPY -->
+  <section id="ak-tele" data-screen-label="Teletherapy" style="position:relative; overflow:hidden; background:radial-gradient(115% 95% at 14% 0%, #C6EEE8 0%, #CFE6FF 46%, #FFEFC2 100%); padding:clamp(70px,9vw,130px) clamp(20px,5vw,80px);">
+    <div data-parallax="0.08" style="position:absolute; top:8%; right:-5%; width:380px; height:380px; background:radial-gradient(circle,rgba(22,163,175,.28),transparent 70%); filter:blur(8px);"></div>
+    <div class="ak-tele-grid" style="position:relative; max-width:1140px; margin:0 auto; display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(36px,5vw,64px); align-items:center;">
+      <div data-reveal="left">
+        <div style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#0E7A84; margin-bottom:14px;">Care without distance</div>
+        <h2 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(1.9rem,4vw,3.2rem); line-height:1.06; letter-spacing:-.5px; margin:0 0 16px;">Expert support, right from your living room.</h2>
+        <p style="color:#5A5466; font-size:1.1rem; line-height:1.7; margin:0 0 24px; max-width:480px;">Can't travel? No problem. Through secure <strong style="color:#0E7A84;">teletherapy</strong> and <strong style="color:#0E7A84;">virtual consultations</strong>, AAKAR comes to you — with the same warmth, the same team, and progress you can actually see.</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:26px;">
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Online assessments &amp; live therapy sessions</span></div>
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Home-programme guidance for parents</span></div>
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Digital progress tracking, shared with you</span></div>
+        </div>
+        <a href="consultation.html" data-magnetic style="display:inline-flex; align-items:center; gap:10px; background:#16A3AF; color:#fff; padding:15px 26px; border-radius:44px; font-weight:700; font-size:16px; box-shadow:0 14px 30px rgba(22,163,175,.3);">Book a virtual consultation →</a>
+      </div>
+      <!-- dashboard mockup -->
+      <div data-reveal="right" style="position:relative;">
+        <div style="position:absolute; inset:-6%; background:linear-gradient(135deg,rgba(22,163,175,.18),rgba(125,183,44,.14)); border-radius:32px; filter:blur(4px);"></div>
+        <div style="position:relative; background:#fff; border-radius:24px; box-shadow:0 30px 70px rgba(43,37,53,.16); padding:22px; overflow:hidden;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+            <div style="display:flex; align-items:center; gap:9px;"><img src="images/aakar-emblem.png" alt="" style="width:30px; height:30px; object-fit:contain;"><span style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px;">Aarav's Progress</span></div>
+            <span style="background:rgba(125,183,44,.14); color:#5E9018; font-weight:700; font-size:12px; padding:5px 11px; border-radius:20px;">On track</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px;">
+            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#16A3AF 78%, #E4EFEF 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#0E7A84;">78%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Speech</div></div>
+            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#F58A1F 64%, #F1E8DD 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#B65F07;">64%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Motor</div></div>
+            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#ED1A5F 71%, #F4E2E8 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#C2134B;">71%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Social</div></div>
+          </div>
+          <div style="background:#F8FBFB; border-radius:16px; padding:16px;">
+            <div style="font-size:12px; font-weight:700; color:#2B2535; margin-bottom:12px;">This week</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#3A3446;"><span style="width:9px; height:9px; border-radius:50%; background:#16A3AF;"></span>Speech Therapy · Mon</span><span style="font-size:11px; color:#8A8494;">4:00 PM</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#3A3446;"><span style="width:9px; height:9px; border-radius:50%; background:#F58A1F;"></span>Occupational Therapy · Wed</span><span style="font-size:11px; color:#8A8494;">5:00 PM</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(22,163,175,.08); margin:-4px -8px; padding:8px; border-radius:10px;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#0E7A84; font-weight:700;"><span style="width:9px; height:9px; border-radius:50%; background:#7DB72C; animation:ak-twinkle 1.8s ease-in-out infinite;"></span>Parent Coaching · Fri</span><span style="font-size:11px; color:#0E7A84; font-weight:700;">Live soon</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute; top:-16px; right:-10px; width:50px; height:50px; border-radius:50%; background:#7DB72C; opacity:.9; animation:ak-bob 4.5s ease-in-out infinite;"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- WHY AAKAR IS DIFFERENT -->
   <section id="ak-why" data-screen-label="Why AAKAR" style="position:relative; overflow:hidden; background:radial-gradient(110% 90% at 85% 0%, #EFF6F1 0%, #FBF3E6 55%, #FCEFF4 100%); padding:clamp(70px,9vw,130px) clamp(20px,5vw,80px);">
     <div data-parallax="0.07" style="position:absolute; bottom:-8%; left:-5%; width:400px; height:400px; background:radial-gradient(circle,rgba(125,183,44,.24),transparent 70%); filter:blur(8px);"></div>
@@ -550,83 +745,11 @@
     </div>
   </section>
 
-  <!-- TELETHERAPY -->
-  <section id="ak-tele" data-screen-label="Teletherapy" style="position:relative; overflow:hidden; background:radial-gradient(115% 95% at 14% 0%, #C6EEE8 0%, #CFE6FF 46%, #FFEFC2 100%); padding:clamp(70px,9vw,130px) clamp(20px,5vw,80px);">
-    <div data-parallax="0.08" style="position:absolute; top:8%; right:-5%; width:380px; height:380px; background:radial-gradient(circle,rgba(22,163,175,.28),transparent 70%); filter:blur(8px);"></div>
-    <div class="ak-tele-grid" style="position:relative; max-width:1140px; margin:0 auto; display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(36px,5vw,64px); align-items:center;">
-      <div data-reveal="left">
-        <div style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#0E7A84; margin-bottom:14px;">Care without distance</div>
-        <h2 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(1.9rem,4vw,3.2rem); line-height:1.06; letter-spacing:-.5px; margin:0 0 16px;">Expert support, right from your living room.</h2>
-        <p style="color:#5A5466; font-size:1.1rem; line-height:1.7; margin:0 0 24px; max-width:480px;">Can't travel? No problem. Through secure <strong style="color:#0E7A84;">teletherapy</strong> and <strong style="color:#0E7A84;">virtual consultations</strong>, AAKAR comes to you — with the same warmth, the same team, and progress you can actually see.</p>
-        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:26px;">
-          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Online assessments &amp; live therapy sessions</span></div>
-          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Home-programme guidance for parents</span></div>
-          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span><span style="color:#3A3446; font-weight:500;">Digital progress tracking, shared with you</span></div>
-        </div>
-        <a href="#ak-contact" data-magnetic style="display:inline-flex; align-items:center; gap:10px; background:#16A3AF; color:#fff; padding:15px 26px; border-radius:44px; font-weight:700; font-size:16px; box-shadow:0 14px 30px rgba(22,163,175,.3);">Book a virtual consultation →</a>
-      </div>
-      <!-- dashboard mockup -->
-      <div data-reveal="right" style="position:relative;">
-        <div style="position:absolute; inset:-6%; background:linear-gradient(135deg,rgba(22,163,175,.18),rgba(125,183,44,.14)); border-radius:32px; filter:blur(4px);"></div>
-        <div style="position:relative; background:#fff; border-radius:24px; box-shadow:0 30px 70px rgba(43,37,53,.16); padding:22px; overflow:hidden;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
-            <div style="display:flex; align-items:center; gap:9px;"><img src="images/aakar-emblem.png" alt="" style="width:30px; height:30px; object-fit:contain;"><span style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px;">Aarav's Progress</span></div>
-            <span style="background:rgba(125,183,44,.14); color:#5E9018; font-weight:700; font-size:12px; padding:5px 11px; border-radius:20px;">On track</span>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px;">
-            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#16A3AF 78%, #E4EFEF 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#0E7A84;">78%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Speech</div></div>
-            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#F58A1F 64%, #F1E8DD 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#B65F07;">64%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Motor</div></div>
-            <div style="background:#F8FBFB; border-radius:16px; padding:14px; text-align:center;"><div style="width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:conic-gradient(#ED1A5F 71%, #F4E2E8 0); display:flex; align-items:center; justify-content:center;"><span style="width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:#C2134B;">71%</span></div><div style="font-size:11px; color:#8A8494; font-weight:600;">Social</div></div>
-          </div>
-          <div style="background:#F8FBFB; border-radius:16px; padding:16px;">
-            <div style="font-size:12px; font-weight:700; color:#2B2535; margin-bottom:12px;">This week</div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#3A3446;"><span style="width:9px; height:9px; border-radius:50%; background:#16A3AF;"></span>Speech Therapy · Mon</span><span style="font-size:11px; color:#8A8494;">4:00 PM</span></div>
-              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#3A3446;"><span style="width:9px; height:9px; border-radius:50%; background:#F58A1F;"></span>Occupational Therapy · Wed</span><span style="font-size:11px; color:#8A8494;">5:00 PM</span></div>
-              <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(22,163,175,.08); margin:-4px -8px; padding:8px; border-radius:10px;"><span style="display:flex; align-items:center; gap:9px; font-size:13px; color:#0E7A84; font-weight:700;"><span style="width:9px; height:9px; border-radius:50%; background:#7DB72C; animation:ak-twinkle 1.8s ease-in-out infinite;"></span>Parent Coaching · Fri</span><span style="font-size:11px; color:#0E7A84; font-weight:700;">Live soon</span></div>
-            </div>
-          </div>
-        </div>
-        <div style="position:absolute; top:-16px; right:-10px; width:50px; height:50px; border-radius:50%; background:#7DB72C; opacity:.9; animation:ak-bob 4.5s ease-in-out infinite;"></div>
-      </div>
-    </div>
-  </section>
+  
 
-  <!-- SPORTS & ADL -->
-  <section id="ak-sports" data-screen-label="Sports & ADL" style="position:relative; overflow:hidden; background:radial-gradient(115% 95% at 80% 0%, #FFE3BC 0%, #FFD9DB 48%, #C9EEE2 100%); padding:clamp(64px,8vw,110px) clamp(20px,5vw,80px); color:#2B2535;">
-    <div data-parallax="0.06" style="position:absolute; top:6%; left:-5%; width:400px; height:400px; background:radial-gradient(circle,rgba(245,138,31,.26),transparent 70%); filter:blur(8px);"></div>
-    <div data-parallax="0.09" style="position:absolute; bottom:-8%; right:-6%; width:420px; height:420px; background:radial-gradient(circle,rgba(22,163,175,.24),transparent 70%); filter:blur(8px);"></div>
-    <div data-parallax="0.12" style="position:absolute; top:14%; left:8%; width:54px; height:54px; border-radius:50%; border:5px solid rgba(245,138,31,.4); animation:ak-bob 5s ease-in-out infinite;"></div>
-    <div data-parallax="0.16" style="position:absolute; bottom:16%; right:10%; width:42px; height:42px; border-radius:12px; background:rgba(22,163,175,.3); transform:rotate(20deg); animation:ak-bob 4s ease-in-out infinite;"></div>
-    <div style="position:relative; max-width:1100px; margin:0 auto; text-align:center;">
-      <div data-reveal="up" style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#B65F07; margin-bottom:14px;">Move · Balance · Belong</div>
-      <h2 data-reveal="up" data-delay="80" class="ak-crayon" style="font-size:clamp(2.9rem,6.6vw,5.4rem); line-height:1; letter-spacing:.5px; margin:0 auto 16px; max-width:880px; color:#2B2535;"><span style="display:inline-block; position:relative;">Confidence is built in motion<svg class="ak-underline" data-crayon-underline viewBox="0 0 300 14" preserveAspectRatio="none" style="--len:320; position:absolute; left:0; right:0; bottom:-8px;"><path d="M4 9 C 60 2, 120 14, 180 7 S 260 3, 296 8" fill="none" stroke="#F58A1F" stroke-width="4" stroke-linecap="round"></path></svg></span></h2>
-      <p data-reveal="up" data-delay="160" style="max-width:620px; margin:0 auto clamp(34px,4vw,48px); font-size:clamp(1rem,1.6vw,1.18rem); line-height:1.6; color:#5A5466;">Our sports training &amp; ADL programmes turn everyday movement into independence — and independence into self-belief.</p>
-      <div class="ak-sports-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
-        <div data-reveal="up" data-hover style="background:#fff; border:1px solid rgba(43,37,53,.05); border-radius:22px; padding:26px 20px; box-shadow:0 14px 34px rgba(43,37,53,.07); transition:transform .35s;"><div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin-bottom:6px; color:#B65F07;">Sports Training</div><div style="font-size:.92rem; color:#5A5466; line-height:1.5;">Strength, stamina &amp; team play in a joyful, structured setting.</div></div>
-        <div data-reveal="up" data-delay="60" data-hover style="background:#fff; border:1px solid rgba(43,37,53,.05); border-radius:22px; padding:26px 20px; box-shadow:0 14px 34px rgba(43,37,53,.07); transition:transform .35s;"><div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin-bottom:6px; color:#C2134B;">ADL Training</div><div style="font-size:.92rem; color:#5A5466; line-height:1.5;">Dressing, eating, grooming — daily living, mastered step by step.</div></div>
-        <div data-reveal="up" data-delay="120" data-hover style="background:#fff; border:1px solid rgba(43,37,53,.05); border-radius:22px; padding:26px 20px; box-shadow:0 14px 34px rgba(43,37,53,.07); transition:transform .35s;"><div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin-bottom:6px; color:#0E7A84;">Balance &amp; Coordination</div><div style="font-size:.92rem; color:#5A5466; line-height:1.5;">Core motor skills that make play — and the playground — possible.</div></div>
-        <div data-reveal="up" data-delay="180" data-hover style="background:#fff; border:1px solid rgba(43,37,53,.05); border-radius:22px; padding:26px 20px; box-shadow:0 14px 34px rgba(43,37,53,.07); transition:transform .35s;"><div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin-bottom:6px; color:#5E9018;">Independence</div><div style="font-size:.92rem; color:#5A5466; line-height:1.5;">The quiet pride of doing it themselves, for the very first time.</div></div>
-      </div>
-    </div>
-  </section>
+  
 
-  <!-- IMPACT (capability-framed) -->
-  <section id="ak-impact" data-screen-label="Impact" style="position:relative; overflow:hidden; background:radial-gradient(115% 95% at 50% 0%, #FFE7BE 0%, #FFD7E6 50%, #C9EEE2 100%); padding:clamp(70px,9vw,120px) clamp(20px,5vw,80px);">
-    <div data-parallax="0.06" style="position:absolute; top:0; left:-5%; width:380px; height:380px; background:radial-gradient(circle,rgba(22,163,175,.24),transparent 70%); filter:blur(8px);"></div>
-    <div data-parallax="0.09" style="position:absolute; bottom:-8%; right:-5%; width:400px; height:400px; background:radial-gradient(circle,rgba(255,179,0,.22),transparent 70%); filter:blur(8px);"></div>
-    <div style="position:relative; max-width:1100px; margin:0 auto; text-align:center; margin-bottom:clamp(34px,4vw,52px);">
-      <div data-reveal="up" style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#B57400; margin-bottom:14px;">Built to go the distance</div>
-      <h2 data-reveal="up" data-delay="80" style="font-family:'Caveat',cursive; font-weight:700; font-size:clamp(2.7rem,6vw,4.8rem); line-height:1; letter-spacing:.5px; margin:0 auto; max-width:760px;">A new centre, built on real experience.</h2>
-      <p data-reveal="up" data-delay="160" style="max-width:620px; margin:18px auto 0; color:#5A5466; font-size:clamp(1rem,1.6vw,1.18rem); line-height:1.6;">We're just beginning our story — but our care is grounded in years of hands-on work and a genuinely complete approach.</p>
-    </div>
-    <div class="ak-impact-grid" style="position:relative; max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
-      <div data-reveal="scale" style="background:#fff; border-radius:24px; padding:30px 20px; text-align:center; box-shadow:0 14px 36px rgba(43,37,53,.06);"><div data-count="25" data-suffix="+" style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(2.4rem,5vw,3.4rem); color:#16A3AF; line-height:1;">25+</div><div style="color:#5A5466; font-weight:600; margin-top:8px;">Services under one roof</div></div>
-      <div data-reveal="scale" data-delay="80" style="background:#fff; border-radius:24px; padding:30px 20px; text-align:center; box-shadow:0 14px 36px rgba(43,37,53,.06);"><div data-count="7" style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(2.4rem,5vw,3.4rem); color:#ED1A5F; line-height:1;">7</div><div style="color:#5A5466; font-weight:600; margin-top:8px;">Development domains</div></div>
-      <div data-reveal="scale" data-delay="160" style="background:#fff; border-radius:24px; padding:30px 20px; text-align:center; box-shadow:0 14px 36px rgba(43,37,53,.06);"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(2.4rem,5vw,3.4rem); color:#F58A1F; line-height:1;">0–18</div><div style="color:#5A5466; font-weight:600; margin-top:8px;">Ages we support</div></div>
-      <div data-reveal="scale" data-delay="240" style="background:#fff; border-radius:24px; padding:30px 20px; text-align:center; box-shadow:0 14px 36px rgba(43,37,53,.06);"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(2.4rem,5vw,3.4rem); color:#7DB72C; line-height:1;">1</div><div style="color:#5A5466; font-weight:600; margin-top:8px;">United, caring team</div></div>
-    </div>
-  </section>
+  
 
   <!-- CONTACT -->
   <section id="ak-contact" data-screen-label="Contact" style="position:relative; overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #FFEFC2 0%, #FFD7E6 46%, #CFE6FF 100%); padding:clamp(70px,9vw,130px) clamp(20px,5vw,80px);">
@@ -641,7 +764,7 @@
         <p style="color:#5A5466; font-size:1.1rem; line-height:1.7; margin:0 0 28px; max-width:460px;">No pressure, no jargon — just a warm conversation about your child. Tell us a little, and we'll take it from there.</p>
 
         <div style="display:flex; flex-direction:column; gap:14px;">
-          <a href="https://wa.me/917838778825?text=Hi%20AAKAR%2C%20I%27d%20like%20to%20know%20more%20about%20a%20developmental%20assessment%20for%20my%20child.%20%F0%9F%98%8A" target="_blank" rel="noopener" data-hover style="display:flex; align-items:center; gap:14px; background:#fff; border-radius:18px; padding:16px 20px; box-shadow:0 10px 26px rgba(43,37,53,.06); transition:transform .3s;">
+          <a href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener" data-hover style="display:flex; align-items:center; gap:14px; background:#fff; border-radius:18px; padding:16px 20px; box-shadow:0 10px 26px rgba(43,37,53,.06); transition:transform .3s;">
             <span style="flex:none; width:46px; height:46px; border-radius:14px; background:#25D366; display:flex; align-items:center; justify-content:center;"><svg width="24" height="24" viewBox="0 0 32 32" fill="#fff"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.96.51 3.87 1.49 5.56L4.8 27.2l6.74-1.64a11 11 0 0 0 4.5.96h.01c6.11 0 11.06-4.95 11.06-11.06C27.11 8.95 22.15 4 16.04 4Zm6.05 15.38c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-1.66-.83-2.75-1.48-3.85-3.36-.29-.5.29-.46.83-1.54.09-.18.05-.35-.02-.49-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.94 2.96 4.7 4.15 1.75.76 2.44.82 3.32.69.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33Z"/></svg></span>
             <div><div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.05rem;">WhatsApp us</div><div style="color:#8A8494; font-size:.9rem;">Fastest way to reach us — tap to chat</div></div>
           </a>
@@ -687,7 +810,7 @@
           <span style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:30px;"><span style="color:#2BC4D0">A</span><span style="color:#FF477E">A</span><span style="color:#FF9F43">K</span><span style="color:#9BD64A">A</span><span style="color:#FFD54F">R</span></span>
         </div>
         <p style="color:#B7AFC4; max-width:340px; line-height:1.6; margin:0 0 18px;">Shaping every child's tomorrow. A place where potential is discovered, nurtured and transformed.</p>
-        <a href="https://wa.me/917838778825?text=Hi%20AAKAR%2C%20I%27d%20like%20to%20know%20more%20about%20a%20developmental%20assessment%20for%20my%20child." target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:9px; color:#9BD64A; font-weight:700;">Chat on WhatsApp →</a>
+        <a href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:9px; color:#9BD64A; font-weight:700;">Chat on WhatsApp →</a>
       </div>
       <div>
         <h4 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:18px; margin:0 0 16px;">Explore</h4>
@@ -697,7 +820,7 @@
           <a href="#ak-conditions" style="transition:color .2s;">Conditions We Support</a>
           <a href="#ak-founder" style="transition:color .2s;">About Dr Khushboo</a>
           <a href="Gallery.dc.html" style="transition:color .2s;">Gallery</a>
-          <a href="Workshops & Training.dc.html" style="transition:color .2s;">Workshops &amp; Training</a>
+          <a href="consultation.html" style="transition:color .2s;">Virtual Consultation</a>
         </div>
       </div>
       <div>
@@ -716,7 +839,7 @@
   </footer>
 
   <!-- FLOATING WHATSAPP -->
-  <a id="ak-wa" href="https://wa.me/917838778825?text=Hi%20AAKAR%2C%20I%27d%20like%20to%20know%20more%20about%20a%20developmental%20assessment%20for%20my%20child.%20%F0%9F%98%8A" target="_blank" rel="noopener" aria-label="Chat with AAKAR on WhatsApp" style="position:fixed; bottom:24px; right:24px; z-index:950; width:62px; height:62px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(37,211,102,.45); transition:transform .25s;">
+  <a id="ak-wa" href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener" aria-label="Chat with AAKAR on WhatsApp" style="position:fixed; bottom:24px; right:24px; z-index:950; width:62px; height:62px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(37,211,102,.45); transition:transform .25s;">
     <span style="position:absolute; inset:0; border-radius:50%; background:#25D366; animation:ak-pulse 2.4s ease-out infinite; z-index:-1;"></span>
     <svg width="32" height="32" viewBox="0 0 32 32" fill="#fff" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.96.51 3.87 1.49 5.56L4.8 27.2l6.74-1.64a11 11 0 0 0 4.5.96h.01c6.11 0 11.06-4.95 11.06-11.06C27.11 8.95 22.15 4 16.04 4Zm0 20.27h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.49.85.93-3.4-.22-.35a9.16 9.16 0 0 1-1.41-4.9c0-5.07 4.13-9.2 9.21-9.2 2.46 0 4.77.96 6.5 2.7a9.13 9.13 0 0 1 2.7 6.51c0 5.08-4.13 9.21-9.2 9.21Zm5.05-6.89c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.74-1.38-1.65-1.54-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.32.41-.49.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.49-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.94 2.96 4.7 4.15.66.28 1.17.45 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33Z"/></svg>
   </a>
@@ -1060,12 +1183,12 @@ class Component {
         e.preventDefault();
         const g = (k)=> (form.querySelector(`[data-cf="${k}"]`)||{}).value || '';
         const name = g('name').trim(), age = g('age').trim(), phone = g('phone').trim(), msg = g('msg').trim();
-        let t = 'Hi AAKAR! 😊 I would love to book a first conversation about my child.';
+        let t = 'Hello AAKAR , I would like to schedule an assessment and learn more about the support services available for my child';
         if (name) t += `\n\nMy name: ${name}`;
         if (age) t += `\nChild's age: ${age}`;
         if (phone) t += `\nPhone: ${phone}`;
         if (msg) t += `\n\nWhat's on my mind: ${msg}`;
-        window.open('https://wa.me/917838778825?text=' + encodeURIComponent(t), '_blank');
+        window.open('https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child' + encodeURIComponent(t), '_blank');
       });
     }
   }

@@ -4,7 +4,7 @@
     {
       "name": "aakar-site",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server", "site", "-p", "4599", "-c-1"],
+      "runtimeArgs": ["--yes", "http-server", ".", "-p", "4599", "-c-1"],
       "port": 4599
     }
   ]

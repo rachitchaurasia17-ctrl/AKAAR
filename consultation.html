@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtual Consultation · AAKAR Child Development Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:#FDF7EF; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2B2535; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:#16A3AF; color:#fff; }
+  @keyframes ak-morph{ 0%,100%{ border-radius:42% 58% 63% 37% / 47% 42% 58% 53% } 50%{ border-radius:62% 38% 41% 59% / 56% 63% 37% 44% } }
+  @keyframes ak-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-14px) } }
+  @keyframes ak-spin{ to{ transform:rotate(360deg) } }
+  @keyframes ak-pulse{ 0%{ transform:scale(1); opacity:.55 } 70%{ transform:scale(1.9); opacity:0 } 100%{ opacity:0 } }
+  @keyframes ak-grad{ 0%{ background-position:0% 50% } 50%{ background-position:100% 50% } 100%{ background-position:0% 50% } }
+  .vc-crayon{ font-family:'Caveat',cursive; font-weight:700; letter-spacing:.5px; }
+  .reveal{ opacity:0; transform:translateY(34px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  .vc-steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .vc-feat{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .vc-grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:clamp(34px,5vw,64px); align-items:center; }
+  .vc-field{ font-family:inherit; font-size:15px; padding:14px 16px; border:1.5px solid #E7E1EC; border-radius:14px; outline:none; transition:border-color .2s; width:100%; }
+  .vc-field:focus{ border-color:#16A3AF; }
+  @media (max-width:900px){ .vc-steps{ grid-template-columns:repeat(2,1fr); } .vc-feat{ grid-template-columns:1fr; } }
+  @media (max-width:820px){ .vc-grid{ grid-template-columns:1fr; } }
+  @media (max-width:520px){ .vc-steps{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div style="position:relative; width:100%; overflow:hidden;">
+
+  <!-- NAV -->
+  <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(20px,4vw,56px); background:rgba(253,247,239,.86); backdrop-filter:blur(14px); box-shadow:0 4px 22px rgba(43,37,53,.06);">
+    <a href="index.html" style="display:flex; align-items:center; gap:12px;">
+      <img src="images/aakar-emblem.png" alt="AAKAR" style="width:44px; height:44px; object-fit:contain;">
+      <span style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:25px; letter-spacing:.5px;"><span style="color:#16A3AF">A</span><span style="color:#ED1A5F">A</span><span style="color:#F58A1F">K</span><span style="color:#7DB72C">A</span><span style="color:#B57400">R</span></span>
+    </a>
+    <a href="index.html" style="display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid rgba(43,37,53,.1); color:#2B2535; padding:11px 20px; border-radius:40px; font-weight:700; font-size:14px;">← Back to home</a>
+  </nav>
+
+  <!-- HERO -->
+  <section style="position:relative; overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #EAF7F4 0%, #CFE6FF 46%, #FFD7E6 100%); padding:clamp(58px,8vw,104px) clamp(20px,5vw,80px) clamp(40px,6vw,72px);">
+    <div style="position:absolute; top:-8%; left:-6%; width:440px; height:440px; background:radial-gradient(circle,rgba(22,163,175,.30),transparent 70%); filter:blur(14px); animation:ak-bob 9s ease-in-out infinite;"></div>
+    <div style="position:absolute; bottom:-14%; right:-6%; width:420px; height:420px; background:radial-gradient(circle,rgba(245,138,31,.24),transparent 70%); filter:blur(14px);"></div>
+    <div style="position:absolute; top:50%; left:50%; width:min(70vh,560px); height:min(70vh,560px); margin:calc(min(70vh,560px)/-2) 0 0 calc(min(70vh,560px)/-2); border-radius:50%; border:2px dashed rgba(22,163,175,.16); animation:ak-spin 60s linear infinite;"></div>
+    <div class="vc-grid" style="position:relative; max-width:1160px; margin:0 auto;">
+      <div class="reveal">
+        <div style="display:inline-flex; align-items:center; gap:9px; background:rgba(255,255,255,.75); border:1px solid rgba(22,163,175,.2); padding:9px 18px; border-radius:40px; font-weight:600; font-size:14px; color:#0E7A84; margin-bottom:22px;">
+          <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#7DB72C;"></span>
+          Care without distance
+        </div>
+        <h1 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(2.4rem,5.6vw,4.2rem); line-height:1.03; letter-spacing:-.5px; margin:0 0 18px;">A virtual consultation, <span style="background:linear-gradient(100deg,#16A3AF,#7DB72C 40%,#F58A1F 70%,#ED1A5F); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:ak-grad 9s ease-in-out infinite;">from the comfort of home.</span></h1>
+        <p style="font-size:clamp(1.05rem,1.7vw,1.28rem); line-height:1.65; color:#5A5466; max-width:540px; margin:0 0 30px;">Meet our team over a secure video call. Share your concerns, ask your questions, and walk away with clear, gentle next steps — no travel, no waiting room, no pressure.</p>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a href="#vc-book" style="display:inline-flex; align-items:center; gap:10px; background:#16A3AF; color:#fff; padding:16px 30px; border-radius:46px; font-weight:700; font-size:16px; box-shadow:0 16px 34px rgba(22,163,175,.32);">Book my consultation →</a>
+          <a href="tel:+917838778825" style="display:inline-flex; align-items:center; gap:10px; background:rgba(255,255,255,.85); border:1.5px solid rgba(43,37,53,.12); color:#2B2535; padding:16px 28px; border-radius:46px; font-weight:700; font-size:16px;">Call us instead</a>
+        </div>
+      </div>
+      <!-- video-call mockup -->
+      <div class="reveal" style="position:relative;">
+        <div style="position:absolute; inset:-6%; background:linear-gradient(135deg,rgba(22,163,175,.18),rgba(237,26,95,.12)); border-radius:32px; filter:blur(4px);"></div>
+        <div style="position:relative; background:#fff; border-radius:24px; box-shadow:0 30px 70px rgba(43,37,53,.18); padding:18px; overflow:hidden;">
+          <div style="position:relative; border-radius:16px; overflow:hidden; aspect-ratio:16/11; background:linear-gradient(135deg,#16A3AF,#0E7A84);">
+            <div style="position:absolute; inset:0; background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 60%);"></div>
+            <div style="position:absolute; inset:16% 16% 22%; border-radius:50%; background:linear-gradient(135deg,#FFB300,#F58A1F); animation:ak-morph 9s ease-in-out infinite; box-shadow:0 20px 50px rgba(245,138,31,.4);"></div>
+            <div style="position:absolute; bottom:12px; left:12px; display:flex; align-items:center; gap:8px; background:rgba(0,0,0,.35); backdrop-filter:blur(4px); padding:7px 12px; border-radius:30px; color:#fff; font-size:12px; font-weight:600;"><span style="width:8px; height:8px; border-radius:50%; background:#7DFF9B; box-shadow:0 0 0 0 rgba(125,255,155,.7); animation:ak-pulse 2s infinite;"></span>Live with AAKAR · 24:08</div>
+            <div style="position:absolute; bottom:12px; right:12px; width:74px; height:54px; border-radius:10px; border:2px solid rgba(255,255,255,.6); background:linear-gradient(135deg,#ED1A5F,#7DB72C);"></div>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:center; gap:12px; padding:14px 4px 4px;">
+            <span style="width:42px; height:42px; border-radius:50%; background:#F1F4F4; display:flex; align-items:center; justify-content:center; font-size:18px;">🎤</span>
+            <span style="width:42px; height:42px; border-radius:50%; background:#F1F4F4; display:flex; align-items:center; justify-content:center; font-size:18px;">📹</span>
+            <span style="width:54px; height:42px; border-radius:21px; background:#ED1A5F; display:flex; align-items:center; justify-content:center; font-size:18px;">📞</span>
+          </div>
+        </div>
+        <div style="position:absolute; top:-16px; right:-10px; width:50px; height:50px; border-radius:50%; background:#7DB72C; opacity:.9; animation:ak-bob 4.5s ease-in-out infinite;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section style="position:relative; padding:clamp(54px,7vw,96px) clamp(20px,5vw,80px); background:#FDF7EF;">
+    <div style="max-width:1140px; margin:0 auto;">
+      <div class="reveal" style="text-align:center; margin-bottom:clamp(34px,4vw,52px);">
+        <div style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#16A3AF; margin-bottom:14px;">Simple &amp; reassuring</div>
+        <h2 class="vc-crayon" style="font-size:clamp(2.3rem,5.4vw,4rem); line-height:1; margin:0;">How a virtual consultation works</h2>
+      </div>
+      <div class="vc-steps">
+        <div class="reveal" style="position:relative; background:#F0FBFB; border-radius:22px; padding:28px 24px; box-shadow:0 12px 30px rgba(22,163,175,.08); border-top:5px solid #16A3AF;"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:28px; color:#16A3AF; line-height:1;">01</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.18rem; margin:10px 0 6px;">Book a time</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">Tell us a little about your child and pick a slot that suits you. It takes a minute.</p></div>
+        <div class="reveal" style="position:relative; background:#FFF1F6; border-radius:22px; padding:28px 24px; box-shadow:0 12px 30px rgba(237,26,95,.08); border-top:5px solid #ED1A5F;"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:28px; color:#C2134B; line-height:1;">02</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.18rem; margin:10px 0 6px;">Get your link</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">We confirm on WhatsApp and send a secure video link — no apps or accounts to set up.</p></div>
+        <div class="reveal" style="position:relative; background:#FFF6EC; border-radius:22px; padding:28px 24px; box-shadow:0 12px 30px rgba(245,138,31,.08); border-top:5px solid #F58A1F;"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:28px; color:#B65F07; line-height:1;">03</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.18rem; margin:10px 0 6px;">Meet our team</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">Join from any device. Share concerns, ask anything, and explore how AAKAR can help.</p></div>
+        <div class="reveal" style="position:relative; background:#F4FBEA; border-radius:22px; padding:28px 24px; box-shadow:0 12px 30px rgba(125,183,44,.08); border-top:5px solid #7DB72C;"><div style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:28px; color:#5E9018; line-height:1;">04</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.18rem; margin:10px 0 6px;">Leave with a plan</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">You'll get clear, gentle next steps — and a warm invitation to continue, only if it feels right.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section style="position:relative; overflow:hidden; background:radial-gradient(115% 95% at 82% 0%, #C9EEE2 0%, #FFEDBC 54%, #FFD7E6 100%); padding:clamp(54px,7vw,96px) clamp(20px,5vw,80px);">
+    <div style="position:absolute; bottom:-10%; left:-5%; width:380px; height:380px; background:radial-gradient(circle,rgba(22,163,175,.22),transparent 70%); filter:blur(8px);"></div>
+    <div style="position:relative; max-width:1140px; margin:0 auto;">
+      <div class="reveal" style="text-align:center; margin-bottom:clamp(30px,4vw,46px);">
+        <h2 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:clamp(1.7rem,3.6vw,2.7rem); margin:0 0 8px;">What you'll get from your call</h2>
+        <p style="color:#5A5466; margin:0 auto; max-width:560px; font-size:1.05rem; line-height:1.6;">The same warmth and expertise as an in-person visit — wherever you are.</p>
+      </div>
+      <div class="vc-feat">
+        <div class="reveal" style="background:#fff; border-radius:20px; padding:26px; box-shadow:0 12px 30px rgba(43,37,53,.06);"><div style="font-size:26px;">💬</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin:10px 0 6px;">A real conversation</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">Time to be heard. We listen to your story before we say a word about next steps.</p></div>
+        <div class="reveal" style="background:#fff; border-radius:20px; padding:26px; box-shadow:0 12px 30px rgba(43,37,53,.06);"><div style="font-size:26px;">🧭</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin:10px 0 6px;">Clear guidance</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">Honest, jargon-free direction on whether assessment or therapy could help — and how.</p></div>
+        <div class="reveal" style="background:#fff; border-radius:20px; padding:26px; box-shadow:0 12px 30px rgba(43,37,53,.06);"><div style="font-size:26px;">🏡</div><h3 style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; margin:10px 0 6px;">Tips for home</h3><p style="color:#5A5466; line-height:1.6; margin:0; font-size:.96rem;">Simple, practical things you can try today to support your child's growth at home.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING FORM -->
+  <section id="vc-book" style="position:relative; overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #FFEFC2 0%, #FFD7E6 46%, #CFE6FF 100%); padding:clamp(56px,8vw,110px) clamp(20px,5vw,80px);">
+    <div style="position:absolute; top:6%; left:-5%; width:400px; height:400px; background:radial-gradient(circle,rgba(22,163,175,.28),transparent 70%); filter:blur(8px);"></div>
+    <div class="vc-grid" style="position:relative; max-width:1100px; margin:0 auto;">
+      <div class="reveal">
+        <div style="font-weight:700; letter-spacing:3px; text-transform:uppercase; font-size:13px; color:#0E7A84; margin-bottom:14px;">Let's begin, gently</div>
+        <h2 class="vc-crayon" style="font-size:clamp(2.4rem,5.4vw,4rem); line-height:1; margin:0 0 16px;">Book your virtual consultation</h2>
+        <p style="color:#5A5466; font-size:1.1rem; line-height:1.7; margin:0 0 24px; max-width:440px;">Fill in a few details and tap send — it opens WhatsApp with your request ready to go. We'll confirm your slot and share the video link personally.</p>
+        <div style="display:flex; flex-direction:column; gap:12px; color:#3A3446; font-weight:500;">
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span>Secure, private video call</div>
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span>No apps or sign-ups required</div>
+          <div style="display:flex; gap:12px; align-items:center;"><span style="flex:none; width:26px; height:26px; border-radius:50%; background:rgba(22,163,175,.14); color:#0E7A84; display:flex; align-items:center; justify-content:center; font-weight:700;">✓</span>Reschedule anytime, no pressure</div>
+        </div>
+      </div>
+      <div class="reveal" style="position:relative;">
+        <div style="position:absolute; inset:-5%; background:linear-gradient(135deg,rgba(22,163,175,.16),rgba(237,26,95,.12)); border-radius:32px; filter:blur(4px);"></div>
+        <form id="vc-form" style="position:relative; background:#fff; border-radius:26px; padding:clamp(26px,3vw,38px); box-shadow:0 28px 64px rgba(43,37,53,.14);">
+          <div style="font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.35rem; margin-bottom:18px;">Request a video consultation</div>
+          <div style="display:flex; flex-direction:column; gap:13px;">
+            <input data-cf="name" class="vc-field" type="text" placeholder="Your name">
+            <div style="display:flex; gap:13px; flex-wrap:wrap;">
+              <input data-cf="age" class="vc-field" type="text" placeholder="Child's age" style="flex:1; min-width:120px;">
+              <input data-cf="phone" class="vc-field" type="tel" placeholder="Phone / WhatsApp" style="flex:1; min-width:120px;">
+            </div>
+            <input data-cf="time" class="vc-field" type="text" placeholder="Preferred day & time (e.g. Sat morning)">
+            <textarea data-cf="msg" class="vc-field" rows="3" placeholder="What would you like to talk about? (optional)" style="resize:vertical;"></textarea>
+            <button type="submit" style="display:inline-flex; align-items:center; justify-content:center; gap:10px; background:#25D366; color:#fff; padding:16px; border:none; border-radius:14px; font-family:inherit; font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 14px 30px rgba(37,211,102,.34);">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="#fff"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.96.51 3.87 1.49 5.56L4.8 27.2l6.74-1.64a11 11 0 0 0 4.5.96h.01c6.11 0 11.06-4.95 11.06-11.06C27.11 8.95 22.15 4 16.04 4Z"/></svg>
+              Request on WhatsApp
+            </button>
+            <p style="text-align:center; color:#9A93A2; font-size:12px; margin:2px 0 0;">Opens WhatsApp with your details ready to send. We reply personally.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#1C1726; color:#EDE8F0; padding:50px clamp(20px,5vw,80px); text-align:center;">
+    <div style="display:flex; align-items:center; justify-content:center; gap:11px; margin-bottom:14px;">
+      <img src="images/aakar-emblem.png" alt="" style="width:42px; height:42px; object-fit:contain;">
+      <span style="font-family:'Fredoka',sans-serif; font-weight:700; font-size:24px;"><span style="color:#2BC4D0">A</span><span style="color:#FF477E">A</span><span style="color:#FF9F43">K</span><span style="color:#9BD64A">A</span><span style="color:#FFD54F">R</span></span>
+    </div>
+    <p style="color:#B7AFC4; margin:0 0 8px;">Shaping every child's tomorrow.</p>
+    <a href="index.html" style="color:#2BC4D0; font-weight:700;">← Back to home</a>
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/917838778825?text=Hello%20AAKAR%20%2C%20I%20would%20like%20to%20schedule%20an%20assessment%20and%20learn%20more%20about%20the%20support%20services%20available%20for%20my%20child" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" style="position:fixed; bottom:24px; right:24px; z-index:80; width:60px; height:60px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 12px 30px rgba(37,211,102,.45);">
+    <span style="position:absolute; inset:0; border-radius:50%; background:#25D366; animation:ak-pulse 2.4s ease-out infinite; z-index:-1;"></span>
+    <svg width="31" height="31" viewBox="0 0 32 32" fill="#fff" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.96.51 3.87 1.49 5.56L4.8 27.2l6.74-1.64a11 11 0 0 0 4.5.96h.01c6.11 0 11.06-4.95 11.06-11.06C27.11 8.95 22.15 4 16.04 4Zm0 20.27h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.49.85.93-3.4-.22-.35a9.16 9.16 0 0 1-1.41-4.9c0-5.07 4.13-9.2 9.21-9.2 2.46 0 4.77.96 6.5 2.7a9.13 9.13 0 0 1 2.7 6.51c0 5.08-4.13 9.21-9.2 9.21Zm5.05-6.89c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.74-1.38-1.65-1.54-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.32.41-.49.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.49-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.94 2.96 4.7 4.15.66.28 1.17.45 1.57.58.66.21 1.26.18 1.74.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33Z"/></svg>
+  </a>
+
+</div>
+<script>
+  // reveal on scroll
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold:0.12, rootMargin:'0px 0px -7% 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  // booking form -> WhatsApp
+  var form = document.getElementById('vc-form');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var g = function(k){ var el = form.querySelector('[data-cf="'+k+'"]'); return el && el.value ? el.value.trim() : ''; };
+    var name=g('name'), age=g('age'), phone=g('phone'), time=g('time'), msg=g('msg');
+    var t = 'Hello AAKAR , I would like to schedule an assessment and learn more about the support services available for my child';
+    t += '\n\nI would like to book a VIRTUAL CONSULTATION.';
+    if(name) t += '\nMy name: ' + name;
+    if(age) t += "\nChild's age: " + age;
+    if(phone) t += '\nPhone/WhatsApp: ' + phone;
+    if(time) t += '\nPreferred time: ' + time;
+    if(msg) t += '\nWhat I would like to discuss: ' + msg;
+    window.open('https://wa.me/917838778825?text=' + encodeURIComponent(t), '_blank');
+  });
+</script>
+</body>
+</html>
