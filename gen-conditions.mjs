@@ -498,5 +498,7 @@ function page(c){
 
 // pages live in /conditions, so rewrite relative asset + internal links to ../
 const fixPaths = (html) => html.replace(/(src|href)="(images\/|index\.html)/g, '$1="../$2');
-CONDS.forEach(c => writeFileSync(`conditions/${c.slug}.html`, fixPaths(page(c))));
+// 'behavioural-emotional' removed from the live site per request
+const ACTIVE = CONDS.filter(c => c.slug !== 'behavioural-emotional');
+ACTIVE.forEach(c => writeFileSync(`conditions/${c.slug}.html`, fixPaths(page(c))));
 console.log('generated', CONDS.length, 'condition pages:', CONDS.map(c=>c.slug).join(', '));
