@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aakar-site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "site", "-p", "4599", "-c-1"],
+      "port": 4599
+    }
+  ]
+}
