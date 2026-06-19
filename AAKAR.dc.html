@@ -63,12 +63,11 @@
   #ak-pre-stage{ position:relative; width:340px; height:340px; display:flex; align-items:center; justify-content:center; will-change:transform; }
   #ak-pre-particles{ position:absolute; inset:0; pointer-events:none; }
   #ak-pre-particles i{ position:absolute; top:50%; left:50%; display:block; border-radius:50%; will-change:transform,opacity; }
-  #ak-pre-ring{ position:absolute; top:50%; left:50%; width:300px; height:300px; margin:-150px 0 0 -150px; will-change:transform,opacity; }
-  #ak-pre-ring circle{ fill:none; stroke-width:5; stroke-linecap:round; transform-origin:center; }
-  #ak-pre-logo{ position:relative; display:flex; flex-direction:column; align-items:center; gap:14px; will-change:transform,opacity; }
-  #ak-pre-emblem{ width:118px; height:118px; object-fit:contain; opacity:0; transform:scale(.6); will-change:transform,opacity; filter:drop-shadow(0 10px 26px rgba(22,163,175,.30)); }
-  #ak-pre-glow{ position:absolute; top:50%; left:50%; width:160px; height:160px; margin:-80px 0 0 -80px; border-radius:50%; background:radial-gradient(circle, rgba(22,163,175,.35), rgba(245,138,31,.18) 45%, transparent 70%); opacity:0; transform:scale(.4); pointer-events:none; }
-  #ak-pre-word{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:40px; letter-spacing:1px; line-height:1; display:flex; gap:1px; }
+  #ak-pre-logo{ position:relative; display:flex; flex-direction:column; align-items:center; gap:16px; will-change:transform,opacity; }
+  #ak-pre-emblem{ width:132px; height:132px; object-fit:contain; opacity:0; transform:scale(.62); will-change:transform,opacity; filter:drop-shadow(0 14px 30px rgba(22,163,175,.28)); }
+  #ak-pre-glow{ position:absolute; top:50%; left:50%; width:230px; height:230px; margin:-115px 0 0 -115px; border-radius:50%; background:radial-gradient(circle, rgba(22,163,175,.30) 0%, rgba(245,138,31,.16) 42%, transparent 70%); opacity:0; transform:scale(.4); pointer-events:none; }
+  #ak-pre-portal{ position:absolute; top:50%; left:50%; width:240px; height:240px; margin:-120px 0 0 -120px; border-radius:50%; background:radial-gradient(circle, #FFFDF8 0%, rgba(255,253,248,.92) 60%, rgba(255,253,248,0) 72%); opacity:0; transform:scale(.2); pointer-events:none; will-change:transform,opacity; }
+  #ak-pre-word{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:42px; letter-spacing:1px; line-height:1; display:flex; gap:1px; }
   #ak-pre-word span{ opacity:0; transform:translateY(16px); display:inline-block; will-change:transform,opacity; }
   #ak-pre-tag{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:12.5px; letter-spacing:3px; text-transform:uppercase; color:#0E7A84; opacity:0; transform:translateY(8px); }
   #ak-pre-skip{ position:fixed; bottom:30px; right:30px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:600; color:#6A6478; background:rgba(255,255,255,.7); border:1px solid rgba(43,37,53,.12); padding:9px 18px; border-radius:30px; cursor:pointer; opacity:0; pointer-events:none; transition:opacity .4s, background .2s, color .2s; backdrop-filter:blur(6px); }
@@ -82,23 +81,13 @@
 <div id="ak-preloader" aria-hidden="true">
   <div id="ak-pre-stage">
     <div id="ak-pre-particles"></div>
-    <svg id="ak-pre-ring" viewBox="0 0 300 300" aria-hidden="true">
-      <circle id="ak-pre-ring-path" cx="150" cy="150" r="120" stroke="url(#ak-pre-grad)"></circle>
-      <defs>
-        <linearGradient id="ak-pre-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#16A3AF"></stop>
-          <stop offset="33%" stop-color="#7DB72C"></stop>
-          <stop offset="62%" stop-color="#F58A1F"></stop>
-          <stop offset="100%" stop-color="#ED1A5F"></stop>
-        </linearGradient>
-      </defs>
-    </svg>
     <div id="ak-pre-glow"></div>
     <div id="ak-pre-logo">
       <img id="ak-pre-emblem" src="images/aakar-emblem.png" alt="AAKAR">
       <div id="ak-pre-word"><span style="color:#16A3AF">A</span><span style="color:#ED1A5F">A</span><span style="color:#F58A1F">K</span><span style="color:#7DB72C">A</span><span style="color:#B57400">R</span></div>
       <div id="ak-pre-tag">Shaping Every Child's Tomorrow</div>
     </div>
+    <div id="ak-pre-portal"></div>
   </div>
   <button id="ak-pre-skip" type="button">Skip intro →</button>
 </div>
@@ -151,44 +140,39 @@
     // skip button appears after 1s
     var skipT = setTimeout(function(){ skip.style.opacity='1'; skip.style.pointerEvents='auto'; }, 1000);
 
-    var ringPath = document.getElementById('ak-pre-ring-path');
-    var len = 2 * Math.PI * 120;
-    gsap.set(ringPath, { strokeDasharray: len, strokeDashoffset: len, rotation:-90, transformOrigin:'center', scale:.85 });
-    gsap.set('#ak-pre-ring', { opacity:0, scale:.9 });
     gsap.set(parts.map(function(p){return p.el;}), { opacity:0 });
+    gsap.set('#ak-pre-portal', { opacity:0, scale:0.2 });
 
-    var tl = gsap.timeline({ defaults:{ ease:'power3.out' }, onComplete: finish });
+    var tl = gsap.timeline({ defaults:{ ease:'power2.out' }, onComplete: finish });
 
-    // 0.0–0.3 : particles emerge
+    // 0.0–0.55 : particles drift gently into view, spread out
     parts.forEach(function(p, k){
-      gsap.set(p.el, { x:p.sx, y:p.sy });
-      tl.to(p.el, { opacity:0.9, duration:0.28, ease:'power1.out' }, 0.0 + (k%6)*0.012);
+      gsap.set(p.el, { x:p.sx, y:p.sy, scale:0.6 });
+      tl.to(p.el, { opacity:0.92, scale:1, duration:0.5, ease:'power1.out' }, 0.04 + (k % 8) * 0.03);
     });
 
-    // 0.3–0.9 : particles sweep curved paths inward + ring draws
-    tl.to('#ak-pre-ring', { opacity:1, scale:1, duration:0.5 }, 0.30);
-    tl.to(ringPath, { strokeDashoffset:0, scale:1, duration:0.62, ease:'power2.inOut' }, 0.30);
+    // 0.55–1.6 : particles sweep along curved paths and converge to the centre
     parts.forEach(function(p, k){
-      var tween = { duration:0.62, ease:'power2.inOut', opacity:0.0 };
-      if(hasMP){ tween.motionPath = { path:[{x:p.sx,y:p.sy},{x:p.mx,y:p.my},{x:0,y:0}], curviness:1.4 }; }
+      var tween = { duration:0.95 + (k % 5) * 0.05, ease:'power2.inOut', opacity:0 };
+      if(hasMP){ tween.motionPath = { path:[{x:p.sx,y:p.sy},{x:p.mx,y:p.my},{x:0,y:0}], curviness:1.5 }; }
       else { tween.x = 0; tween.y = 0; }
-      tl.to(p.el, tween, 0.42 + (k%6)*0.01);
+      tl.to(p.el, tween, 0.6 + (k % 8) * 0.018);
     });
 
-    // 0.9–1.5 : A emblem converges, glow pulse
-    tl.to('#ak-pre-emblem', { opacity:1, scale:1, duration:0.55, ease:'back.out(1.7)' }, 0.92);
-    tl.fromTo('#ak-pre-glow', { opacity:0, scale:0.4 }, { opacity:1, scale:1.25, duration:0.5, ease:'power2.out' }, 0.95);
-    tl.to('#ak-pre-glow', { opacity:0, scale:1.7, duration:0.7, ease:'power2.out' }, 1.25);
-    tl.to(ringPath, { scale:1.04, duration:0.5, ease:'sine.inOut' }, 1.0);
+    // 1.25–2.15 : the AAKAR emblem forms, with a soft glow that breathes outward
+    tl.fromTo('#ak-pre-glow', { opacity:0, scale:0.4 }, { opacity:1, scale:1.2, duration:0.7, ease:'power2.out' }, 1.25);
+    tl.fromTo('#ak-pre-emblem', { opacity:0, scale:0.62, rotate:-8 }, { opacity:1, scale:1, rotate:0, duration:0.9, ease:'back.out(1.5)' }, 1.3);
+    tl.to('#ak-pre-glow', { opacity:0, scale:1.7, duration:1.0, ease:'sine.out' }, 1.7);
 
-    // 1.5–2.0 : wordmark letters + tagline
-    tl.to('#ak-pre-word span', { opacity:1, y:0, duration:0.5, stagger:0.06, ease:'back.out(2)' }, 1.45);
-    tl.to('#ak-pre-tag', { opacity:1, y:0, duration:0.45 }, 1.78);
+    // 2.2–3.0 : wordmark letters rise in, tagline settles beneath
+    tl.to('#ak-pre-word span', { opacity:1, y:0, duration:0.62, stagger:0.08, ease:'back.out(1.8)' }, 2.18);
+    tl.to('#ak-pre-tag', { opacity:1, y:0, duration:0.55, ease:'power2.out' }, 2.62);
 
-    // 2.0–2.4 : ring expands into portal, logo dissolves into the page
-    tl.to('#ak-pre-ring', { scale:6.5, opacity:0, duration:0.62, ease:'power3.in' }, 2.02);
-    tl.to('#ak-pre-stage', { scale:1.16, duration:0.6, ease:'power2.in' }, 2.04);
-    tl.to(pre, { opacity:0, duration:0.5, ease:'power2.inOut' }, 2.12);
+    // 3.25–4.1 : gentle hold, then an iris-glow portal opens and the homepage is revealed
+    tl.to('#ak-pre-stage', { scale:1.08, duration:0.85, ease:'power1.inOut' }, 3.25);
+    tl.to('#ak-pre-portal', { opacity:1, scale:9, duration:0.8, ease:'power2.in' }, 3.3);
+    tl.to('#ak-pre-logo', { opacity:0, duration:0.45, ease:'power1.in' }, 3.45);
+    tl.to(pre, { opacity:0, duration:0.6, ease:'power2.inOut' }, 3.55);
 
     pre.__cleanup = function(){ clearTimeout(skipT); tl.kill(); };
   }
